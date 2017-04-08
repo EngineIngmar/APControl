@@ -1,0 +1,16 @@
+APDatabase.sqlite
+actuators/__pycache__/
+actuators/__init__.py
+actuators/__init__.pyc
+actuators/relais.pyc
+actuators/trans433.pyc
+actuators/defaultState.pyc
+dbControl/__pycache__/
+sensors/__pycache__/
+sensors/__init__.py
+sensors/__init__.pyc
+sensors/DHT22.pyc
+sensors/BH1750.pyc
+sensors/D18B20.pyc
+sensors/HCSR04.pyc
+sensors/LFM.pyc
