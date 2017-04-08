@@ -6,7 +6,7 @@ APControl is designed to control and monitor aquaponic systems. The software is 
 Use is at your own risk. No liability is accepted for damages to fish, plants, humans or technology.
 
 Look at the software structure for a better understanding: 
-[APControl structure](APControl structure 1704.pdf)
+[APControl structure](https://github.com/EngineIngmar/APControl/blob/master/APControl%20structure%201704.pdf)
 
 APControl has a modular structure and initially performs basic functions:
 	Switching actuators by time (time) and by interval
