@@ -21,13 +21,17 @@ APControl has a modular structure and initially performs basic functions:
 
 ## module description
 **APControl.py** 
+
 Checks the actuators of the aquaponic system. The actuators are switched according to the switching times and switching intervals stored in the database. The state changes are written to the database.
 
 **APLog.py** 
+
 The module reads out the parameters recorded by the sensors according to the options stored in the database (eg pin assignment) and sets the values in the database. If the measured value does not deviate from the predecessor, no value is stored.
 
 **APGuard.py** 
+
 The module monitors the status of the other software modules and feeds deviations from the desired state into the database. Furthermore, the set limit values of individual sensors are checked and deviations stored in the database.
 
 **APThing.py** 
+
 Loads the last stored state in the database into a thingspeakchannel.
