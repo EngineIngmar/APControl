@@ -9,7 +9,8 @@ https://pypi.python.org/pypi/RPi.GPIO
 """
 
 import RPi.GPIO as IO
-import time
+import time, datetime
+from datetime import timedelta
 import sys
 import sqlite3 as lite
 
@@ -19,21 +20,29 @@ IO.setwarnings(False)
 """read distance of a HCSR04 sensor
 exception handling and write in database
 return values"""
-def readLevel(dbname,trig,echo,ground):
+def readLevel(dbName,trig,echo,ground):
     try:
+        """trig send ultrasonic signal"""
         IO.setup(trig, IO.OUT)
+        """echo receive signal"""
         IO.setup(echo, IO.IN)
+        """send ultrasonic signal"""
         IO.output(trig, True)
         time.sleep(0.00001)
         IO.output(trig, False)
-        start = time.time()
-        stop = time.time()
-        while IO.input(echo) == 0:
-            start = time.time()
-        while IO.input(echo) == 1:
-            stop = time.time()
-        delta =  stop - start
-        # multiply by sonic speed and divide by 2
+        """set time measurement"""
+        start = datetime.datetime.now()
+        stop = datetime.datetime.now()
+        """Because the sound pulse sometimes does not return, the measuring time must be limited."""
+        measurementDur = datetime.datetime.now() + timedelta(milliseconds = 500)
+        """The monitoring of the echo is limited to 0.5 seconds."""
+        while (IO.input(echo) == 0) and (datetime.datetime.now() < measurementDur):
+            start = datetime.datetime.now()
+        measurementInc = datetime.datetime.now() + timedelta(milliseconds = 500)
+        while (IO.input(echo) == 1) and (datetime.datetime.now() < measurementDur):
+            stop = datetime.datetime.now()
+        delta =  (stop - start).total_seconds()
+        """multiply by sonic speed and divide by 2"""
         distance = (delta * 34300) / 2
         level = ground-distance
     except Exception as e:
