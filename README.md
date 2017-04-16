@@ -1,5 +1,5 @@
-# APControl
-**control, monitor and logging of aquaponic systems**
+# SCAPPi
+**Software for controlling aquaponic systems with a Raspberry-Pi.**
 
 a project by EngineIngmar
 
