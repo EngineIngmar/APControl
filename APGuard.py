@@ -9,13 +9,11 @@ installed database
 
 from dbControl import dbLog,dbQuery
 from sensors import DHT22, D18B20, HCSR04, LFM
-#from actuators import relais, trans433
 
 import sqlite3 as lite
 import datetime
 from datetime import timedelta,datetime
 import time
-#import thingspeak
 import sys, traceback,os
 import subprocess
 
