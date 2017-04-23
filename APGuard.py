@@ -60,7 +60,6 @@ def main():
     id    type    gpio    gpio_trig    gpio_echo    w1_id    bed_cm    increment_sec
     """
     sensorList = dbQuery.dbQuerySelect(dbName,'SELECT * FROM Opt_sensor')
-    #while True
     
     checkTime = datetime.now()
     """get increment for checking the system and software status"""
