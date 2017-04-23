@@ -129,8 +129,8 @@ def main():
                                 if actType == '433': trans433.conditionalSend433(dbName,id,actTargetState,rowOpt[3],rowOpt[4])
                                 
                                 """set new start an end time in dependence of the increment and duration"""
-                                actuatorTimeIncrementPoints[row][2] = actuatorTimeIncrementPoints[row][1] + timedelta(seconds=duration*60)
-                                actuatorTimeIncrementPoints[row][1] = actuatorTimeIncrementPoints[row][1] + timedelta(seconds=increment*60)
+                                actuatorTimeIncrementPoints[row][2] = actuatorTimeIncrementPoints[row][1] + timedelta(minutes=duration)
+                                actuatorTimeIncrementPoints[row][1] = actuatorTimeIncrementPoints[row][1] + timedelta(minutes=increment)
                             
                             """if it is later than the end time set wtich actuator off"""     
                             if actuatorTimeIncrementPoints[row][2] < now: 
