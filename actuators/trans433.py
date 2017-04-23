@@ -44,7 +44,8 @@ import sqlite3 as lite
 def send433(dbName,id,state,code):
     #call 433Mhz code send script with exception logging
     try:
-        subprocess.call(['sudo','433.sh',str(code)])
+        for i in range(1,5):
+            subprocess.call(['sudo','433.sh',str(code)])
     except Exception as e:
         db = lite.connect(dbName)
         cursor = db.cursor()
