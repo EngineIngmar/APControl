@@ -45,7 +45,6 @@ def readLevel(dbName,trig,echo,ground):
         """multiply by sonic speed and divide by 2"""
         distance = (delta * 34300) / 2
         level = ground-distance
-        #print(level)
     except Exception as e:
         db = lite.connect(dbName)
         cursor = db.cursor()
