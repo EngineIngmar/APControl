@@ -113,7 +113,7 @@ def main():
             
             now = datetime.now()
             
-            if criticalErrors > 0: #and now > minRebootTime:
+            if criticalErrors > 0 and now > minRebootTime:
                 dbLog.softwareLog(dbName,'APGuard.py','raspberry reboot (critical errors: %s)' %criticalErrors)
                 #insert external communication modul
                 time.sleep(3)
