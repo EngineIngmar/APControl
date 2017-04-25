@@ -41,7 +41,8 @@ def checkOnline(dbName):
         pingstatus = 'online'
     else:
         pingstatus = 'offline'
-
+        dbLog.softwareLog(dbName,'APGuard.py','system offline')
+        time.sleep(1)
     return pingstatus
 
 def main():
@@ -109,13 +110,15 @@ def main():
             """check online status"""
             if checkOnline(dbName) == 'offline':
                 criticalErrors = criticalErrors + 1
+            
             now = datetime.now()
-            if criticalErrors > 0 and now > minRebootTime:
+            
+            if criticalErrors > 0: #and now > minRebootTime:
                 dbLog.softwareLog(dbName,'APGuard.py','raspberry reboot (critical errors: %s)' %criticalErrors)
                 #insert external communication modul
                 time.sleep(3)
-                subprocess.call('sudo shutdown -r -now')
-                time.sleep(3)
+                os.system('sudo shutdown -r now')
+                #time.sleep(3)
             
             """set new check time with general increment"""
             checkTime = checkTime + timedelta(minutes=checkInc)
