@@ -16,6 +16,7 @@ from datetime import timedelta,datetime
 import time
 import sys, traceback,os
 import subprocess
+import os
 
 def checkProcess(dbName,procName,currentPath,critical):
     try:
@@ -30,8 +31,18 @@ def checkProcess(dbName,procName,currentPath,critical):
         dbLog.softwareLog(dbName,'APGuard.py','%s error: %s not running' % (critical, procName))
         processState = 0
         
-    return processState 
+    return processState
 
+def checkOnline(dbName):
+    """check online status with google dns server"""
+    response = os.system('ping -c 1 ' + '8.8.8.8')
+    # check the response
+    if response == 0:
+        pingstatus = 'online'
+    else:
+        pingstatus = 'offline'
+
+    return pingstatus
 
 def main():
     dbName='APDatabase.sqlite'
@@ -95,13 +106,15 @@ def main():
                         if sensorValue >= rowLimit[3]:
                             dbLog.softwareLog(dbName,'APGuard.py','system max error: %s (upper limit: %s %s - actual value: %s %s)' % (rowLimit[0],rowLimit[3],rowLimit[1],sensorValue,rowLimit[1]))
             
-            
+            """check online status"""
+            if checkOnline(dbName) == 'offline':
+                criticalErrors = criticalErrors + 1
             now = datetime.now()
             if criticalErrors > 0 and now > minRebootTime:
                 dbLog.softwareLog(dbName,'APGuard.py','raspberry reboot (critical errors: %s)' %criticalErrors)
                 #insert external communication modul
                 time.sleep(3)
-                #subprocess.call('sudo shutdown -r -now')
+                subprocess.call('sudo shutdown -r -now')
                 time.sleep(3)
             
             """set new check time with general increment"""
