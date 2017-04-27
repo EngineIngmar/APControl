@@ -35,22 +35,17 @@ def checkProcess(dbName,procName,currentPath,critical):
 
 def checkOnline(dbName):
     """check online status with google dns server"""
-    response = os.system('ping -c 1 ' + '8.8.8.8')
+    response = os.system('ping -c 3 ' + '8.8.8.8')
     # check the response
     if response == 0:
         pingstatus = 'online'
-        """reset error counter if connection is reastablished"""
-        connectionErrors = 0
-        print(connectionErrors)
     else:
         pingstatus = 'offline'
-        
     return pingstatus
 
 def main():
     dbName='APDatabase.sqlite'
     currentPath = os.getcwd()
-    global connectionErrors
     criticalErrors, minorErrors, connectionErrors = 0, 0, 0 
     
     dbLog.softwareLog(dbName,'APGuard.py','script started')
