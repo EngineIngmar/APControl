@@ -124,7 +124,6 @@ def main():
                 #insert external communication modul
                 time.sleep(3)
                 os.system('sudo shutdown -r now')
-                #time.sleep(3)
             
             """set new check time with general increment"""
             checkTime = checkTime + timedelta(minutes=checkInc)
