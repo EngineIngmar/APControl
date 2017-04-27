@@ -41,6 +41,7 @@ def checkOnline(dbName):
         pingstatus = 'online'
         """reset error counter if connection is reastablished"""
         connectionErrors = 0
+        print(connectionErrors)
     else:
         pingstatus = 'offline'
         
@@ -49,7 +50,8 @@ def checkOnline(dbName):
 def main():
     dbName='APDatabase.sqlite'
     currentPath = os.getcwd()
-    criticalErrors, minorErrors, connectionErrors = 0, 0
+    global connectionErrors
+    criticalErrors, minorErrors, connectionErrors = 0, 0, 0 
     
     dbLog.softwareLog(dbName,'APGuard.py','script started')
     time.sleep(1)
@@ -113,7 +115,9 @@ def main():
                 connectionErrors = connectionErrors + 1
                 dbLog.softwareLog(dbName,'APGuard.py','system offline (connection errors: %s)' %connectionErrors)
                 time.sleep(1)
-            
+            else:
+                connectionErrors = 0
+             
             """if the connection test is ten times false, a critical error is logged"""
             if connectionErrors > 9:
                 criticalErrors = criticalErrors + 1
