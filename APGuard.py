@@ -35,7 +35,7 @@ def checkProcess(dbName,procName,currentPath,critical):
 
 def checkOnline(dbName):
     """check online status with google dns server"""
-    response = os.system('ping -c 3 ' + '8.8.8.8')
+    response = os.system('ping -c 5 ' + '8.8.8.8')
     # check the response
     if response == 0:
         pingstatus = 'online'
