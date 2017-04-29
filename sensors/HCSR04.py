@@ -13,6 +13,7 @@ import time, datetime
 from datetime import timedelta
 import sys
 import sqlite3 as lite
+import numpy
 
 IO.setmode(IO.BCM)
 IO.setwarnings(False)
@@ -22,28 +23,32 @@ exception handling and write in database
 return values"""
 def readLevel(dbName,trig,echo,ground):
     try:
-        """trig send ultrasonic signal"""
-        IO.setup(trig, IO.OUT)
-        """echo receive signal"""
-        IO.setup(echo, IO.IN)
-        """send ultrasonic signal"""
-        IO.output(trig, True)
-        time.sleep(0.00001)
-        IO.output(trig, False)
-        """set time measurement"""
-        start = datetime.datetime.now()
-        stop = datetime.datetime.now()
-        """Because the sound pulse sometimes does not return, the measuring time must be limited."""
-        measurementDur = datetime.datetime.now() + timedelta(milliseconds = 500)
-        """The monitoring of the echo is limited to 0.5 seconds."""
-        while (IO.input(echo) == 0) and (datetime.datetime.now() < measurementDur):
+        """Measures five times and provides median"""
+        delta = []
+        for i in range(0,5):
+            """trig send ultrasonic signal"""
+            IO.setup(trig, IO.OUT)
+            """echo receive signal"""
+            IO.setup(echo, IO.IN)
+            """send ultrasonic signal"""
+            IO.output(trig, True)
+            time.sleep(0.00001)
+            IO.output(trig, False)
+            """set time measurement"""
             start = datetime.datetime.now()
-        measurementInc = datetime.datetime.now() + timedelta(milliseconds = 500)
-        while (IO.input(echo) == 1) and (datetime.datetime.now() < measurementDur):
             stop = datetime.datetime.now()
-        delta =  (stop - start).total_seconds()
+            """Because the sound pulse sometimes does not return, the measuring time must be limited."""
+            measurementDur = datetime.datetime.now() + timedelta(milliseconds = 500)
+            """The monitoring of the echo is limited to 0.5 seconds."""
+            while (IO.input(echo) == 0) and (datetime.datetime.now() < measurementDur):
+                start = datetime.datetime.now()
+            measurementInc = datetime.datetime.now() + timedelta(milliseconds = 500)
+            while (IO.input(echo) == 1) and (datetime.datetime.now() < measurementDur):
+                stop = datetime.datetime.now()
+            delta.append((stop - start).total_seconds())
+        deltaMedian = numpy.median(delta)
         """multiply by sonic speed and divide by 2"""
-        distance = (delta * 34300) / 2
+        distance = (deltaMedian * 34300) / 2
         level = ground-distance
     except Exception as e:
         db = lite.connect(dbName)
