@@ -61,8 +61,12 @@ def logSensorValue(dbName,id,temp,hum):
         else:
             lastValue = lastValue
         if (temp != lastValue[0]) or (hum != lastValue[1]):
-            cursor.execute("INSERT INTO Log_system(ID,TEMP_C,HUM_per) VALUES(?,?,?)",(id,temp,hum))
-        db.commit()
+            if (0 <= hum <= 100):
+                cursor.execute("INSERT INTO Log_system(ID,HUM_per) VALUES(?,?)",(id,hum))
+                db.commit()
+            if (abs(lastValue[0]-temp) <= 2):
+                cursor.execute("INSERT INTO Log_system(ID,TEMP_C) VALUES(?,?)",(id,temp))
+                db.commit()
     except Exception as e:
         cursor.execute("INSERT INTO Log_software(MODULE,MESSAGE) VALUES('DHT22.py logSensorValue',?)",[repr(e)])
         db.commit()
