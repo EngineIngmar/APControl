@@ -46,6 +46,7 @@ def readLevel(dbName,trig,echo,ground):
             while (IO.input(echo) == 1) and (datetime.datetime.now() < measurementDur):
                 stop = datetime.datetime.now()
             delta.append((stop - start).total_seconds())
+            time.sleep(0.01)
         deltaMedian = numpy.median(delta)
         """multiply by sonic speed and divide by 2"""
         distance = (deltaMedian * 34300) / 2
