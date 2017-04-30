@@ -49,22 +49,26 @@ def getSensorList(dbName):
 """log sensors values in database"""
 def logSensorValue(dbName,id,temp,hum):
     try:
+        lastvalue = []
         db = lite.connect(dbName)
         cursor = db.cursor()
         #id    TIMESTAMP    STATE_actual    STATE_target    TEMP_C    HUM_per    LEVEL_cm    FLOW_lmin
-        cursor.execute('SELECT TEMP_C,HUM_per FROM Log_system WHERE ID=? ORDER BY TIMESTAMP DESC LIMIT 1',[id])
-        
+        cursor.execute('SELECT TEMP_C FROM Log_system WHERE ID=? AND TEMP_C IS NOT NULL ORDER BY TIMESTAMP DESC LIMIT 1',[id])
         """Check whether there is already a value in the database. If not, lastValue set to zero."""
-        lastValue = cursor.fetchone()
-        if lastValue is None:
-            lastValue = [0,0]
-        else:
-            lastValue = lastValue
-        if (temp != lastValue[0]) or (hum != lastValue[1]):
+        lastTemp = cursor.fetchone()
+        cursor.execute('SELECT HUM_per FROM Log_system WHERE ID=? AND HUM_per IS NOT NULL ORDER BY TIMESTAMP DESC LIMIT 1',[id])
+        """Check whether there is already a value in the database. If not, lastValue set to zero."""
+        lastHum = cursor.fetchone()
+        
+        #if lastTemp is None:
+        #    lastTemp = 0
+        #else:
+        #    lastTemp = lastTemp
+        if (temp != lastTemp) or (hum != lastHum):
             if (0 <= hum <= 100):
                 cursor.execute("INSERT INTO Log_system(ID,HUM_per) VALUES(?,?)",(id,hum))
                 db.commit()
-            if (abs(lastValue[0]-temp) <= 2):
+            if (abs(lastTemp-temp) <= 5):
                 cursor.execute("INSERT INTO Log_system(ID,TEMP_C) VALUES(?,?)",(id,temp))
                 db.commit()
     except Exception as e:
