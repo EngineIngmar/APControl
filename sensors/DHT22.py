@@ -53,22 +53,23 @@ def logSensorValue(dbName,id,temp,hum):
         db = lite.connect(dbName)
         cursor = db.cursor()
         #id    TIMESTAMP    STATE_actual    STATE_target    TEMP_C    HUM_per    LEVEL_cm    FLOW_lmin
-        cursor.execute('SELECT TEMP_C FROM Log_system WHERE ID=? AND TEMP_C IS NOT NULL ORDER BY TIMESTAMP DESC LIMIT 1',[id])
+        cursor.execute('SELECT TIMESTAMP,TEMP_C FROM Log_system WHERE ID=? AND TEMP_C IS NOT NULL ORDER BY TIMESTAMP DESC LIMIT 1',[id])
         """Check whether there is already a value in the database. If not, lastValue set to zero."""
-        lastTemp = cursor.fetchone()
-        cursor.execute('SELECT HUM_per FROM Log_system WHERE ID=? AND HUM_per IS NOT NULL ORDER BY TIMESTAMP DESC LIMIT 1',[id])
+        lastTemp = cursor.fetchone()[1]
+        cursor.execute('SELECT TIMESTAMP,HUM_per FROM Log_system WHERE ID=? AND HUM_per IS NOT NULL ORDER BY TIMESTAMP DESC LIMIT 1',[id])
         """Check whether there is already a value in the database. If not, lastValue set to zero."""
-        lastHum = cursor.fetchone()
+        lastHum = cursor.fetchone()[1]
         
-        #if lastTemp is None:
-        #    lastTemp = 0
-        #else:
-        #    lastTemp = lastTemp
+        if lastTemp is None:
+            lastTemp = 0
+        else:
+            lastTemp = lastTemp
+        print(temp)
         if (temp != lastTemp) or (hum != lastHum):
             if (0 <= hum <= 100):
                 cursor.execute("INSERT INTO Log_system(ID,HUM_per) VALUES(?,?)",(id,hum))
                 db.commit()
-            if (abs(lastTemp-temp) <= 5):
+            if (abs(lastTemp - temp) <= 5):
                 cursor.execute("INSERT INTO Log_system(ID,TEMP_C) VALUES(?,?)",(id,temp))
                 db.commit()
     except Exception as e:
@@ -82,15 +83,18 @@ def getSensorValue(dbName,id):
     try:
         db = lite.connect(dbName)
         cursor = db.cursor()
-        cursor.execute("SELECT TIMESTAMP,TEMP_C,HUM_per FROM Log_system WHERE ID=? ORDER BY TIMESTAMP DESC LIMIT 1",[id]);
-        sensorValue = cursor.fetchone()
+        cursor.execute("SELECT TIMESTAMP,TEMP_C FROM Log_system WHERE ID=? AND TEMP_C IS NOT NULL ORDER BY TIMESTAMP DESC LIMIT 1",[id]);
+        temp = cursor.fetchone()[1]
+        cursor.execute("SELECT TIMESTAMP,HUM_per FROM Log_system WHERE ID=? AND HUM_per IS NOT NULL ORDER BY TIMESTAMP DESC LIMIT 1",[id]);
+        hum = cursor.fetchone()[2]
+        sensorValue = [temp,hum]
     except Exception as e:
         cursor.execute("INSERT INTO Log_software(MODULE,MESSAGE) VALUES('DHT22.py getSensorValue',?)",[repr(e)])
         db.commit()
         return []
     finally:
         db.close()
-    return sensorValue[1:]
+    return sensorValue
         
 if __name__ == '__main__':
     print('no main function defined')
